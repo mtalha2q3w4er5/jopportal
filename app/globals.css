@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+}
+
+/* Ensure buttons are visible */
+.btn,
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fix for buttons in forms */
+form button[type="submit"] {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+/* Custom button styles with black text */
+.btn-black-text,
+.btn-primary {
+  color: black !important;
+  background-color: white;
+}
+
+.btn-black-text:hover,
+.btn-primary:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Ensure buttons are visible with proper contrast */
+.btn,
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fix for buttons in forms */
+form button[type="submit"] {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-top: 1rem;
+  color: black;
+  background-color: white;
+}

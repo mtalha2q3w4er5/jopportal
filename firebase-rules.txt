@@ -1,0 +1,51 @@
+// Firestore rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow users to read and write their own profile
+    match /profiles/{userId} {
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId;
+      allow delete: if false; // Don't allow profile deletion
+    }
+    
+    // Job postings rules
+    match /jobs/{jobId} {
+      // Anyone can read job postings
+      allow read: if true;
+      
+      // Only employers can create job postings
+      allow create: if request.auth != null && 
+                     get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'employer' &&
+                     request.resource.data.companyId == request.auth.uid;
+      
+      // Only the job creator or admin can update/delete
+      allow update, delete: if request.auth != null && (
+                              resource.data.companyId == request.auth.uid || 
+                              get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'admin'
+                            );
+    }
+    
+    // Admin rules - only admins can access user management
+    match /users/{document=**} {
+      allow read, write: if request.auth != null && 
+                           get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role == 'admin';
+    }
+  }
+}
+
+// Storage rules
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /resumes/{userId}/{fileName} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    match /avatars/{userId}/{fileName} {
+      allow read: if true; // Anyone can view avatars
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
